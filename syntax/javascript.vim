@@ -138,7 +138,7 @@ syn keyword	javaScriptUndefined	undefined
 syn keyword	javaScriptGlobal	true false null Infinity NaN
 syn keyword	javaScriptGlobal	Array ArrayBuffer BigInt Boolean Date Function Intl JSON Math Map Number Object Promise Proxy Reflect RegExp Set String Symbol WeakMap WeakSet
 syn keyword	javaScriptGlobal	globalThis eval
-syn keyword	javaScriptGlobal	isFinite isNan parseFloat parseInt
+syn keyword	javaScriptGlobal	isFinite isNaN parseFloat parseInt
 syn keyword	javaScriptGlobal	decodeURI decodeURIComponent encodeURI encodeURIComponent
 syn keyword	javaScriptGlobal	setTimeout setInterval clearTimeout structuredClone
 syn keyword	javaScriptGlobal	globalThis document window self top parent closed console history location localStorage name navigator opener scheduler
