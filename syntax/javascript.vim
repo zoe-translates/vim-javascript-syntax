@@ -42,22 +42,6 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 
-syn keyword	javaScriptCommentTodo	TODO FIXME XXX TBD NOTE contained
-syn match	javaScriptLineComment	"\/\/.*" contains=@Spell,javaScriptCommentTodo,javaScriptESLInlineDirective
-syn match	javaScriptCommentSkip	"^[ \t]*\*\($\|[ \t]\+\)"
-syn region	javaScriptComment	start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,@javaScriptESLint keepend
-
-" ESLint in-comment config minilanguage
-syn match	javaScriptESLInlineDirective	"\<eslint-disable-\%(next-\)\?line\>.*$" contained
-" Eslint global enable/disable
-syn match	javaScriptESLBlockDirective	"\<eslint-\%(en\|dis\)able\>.*\>" contained
-" Severity directive or options
-syn match	javaScriptESLBlockDirective	+\<eslint\%(\s\+\a\+\%(-\a\+\)\?:\s\+\%(\%(\("\|'\)\%(off\|warn\|error\)\1\|[0-2]\)\|\[.\+\]\),\?\)\+\ze\_s*\%(--\)*+ contained
-" Multiline
-syn match	javaScriptESLBlockDirective	"\<eslint-\%(en\|dis\)able-\%(next-\)\?line\_s*\%(\a\+\%(-\a\+\)\?\|,\s+\|,\%(\s*\n\)\+\s*\)\+" contained
-
-syn cluster	javaScriptESLint	contains=javaScriptESLBlockDirective,javaScriptESLInlineDirective
-
 " Obsolete number and escapes
 " 0-prefixed octal integer literal (not after decimal point or exponent)
 syn match	javaScriptDeprecated	+\%(\.\|[eE][+-]\?\)\@2<!\<0[0-7]\+\>+
@@ -89,15 +73,18 @@ syn region	javaScriptEmbed		start=+${+ end=+}+ contains=@javaScriptEmbededExpr
 
 " Regular expression literals
 " Special character classes in regular expressions
-syn match	javaScriptRegExpSpecial	"\\[bdDwWsStrnvf0]" contained containedin=javaScriptRegExpLiteral
+syn match	javaScriptRegExpWarn	"/" contained containedin=javaScriptRegExpLiteral
+syn match	javaScriptRegExpWarnOff	"\[[^\[\\]\{-}\zs/\ze[^\[\\]\{-}\]" contained containedin=javaScriptRegExpLiteral
+syn match	javaScriptRegExpSpecial	"\\[/bdDwWsStrnvf0]" contained containedin=javaScriptRegExpLiteral
 " backspace
 syn match	javaScriptRegExpSpecial	"\[\\b\]" contained containedin=javaScriptRegExpLiteral
 " caret notation
 syn match	javaScriptRegExpSpecial	"\\c[A-Z]" contained containedin=javaScriptRegExpLiteral
 " Character properties
 syn match 	javaScriptRegExpSpecial	"\\[pP]{.\{-1,}}" contained containedin=javaScriptRegExpLiteral
+syn match	javaScriptRegExpError	"/\{2,}" contained containedin=javaScriptRegExpLiteral
 
-syn region	javaScriptRegExpLiteral	matchgroup=javaScriptRegExpDelimit start=+[,(\[=+]\s*\zs/\ze[^/*]+ms=e-1 start=+[,(\[=+]\?\s\+\zs/\ze[^/*]+ms=e-1 skip=+\\\\\|\(\\\|\[[^]]*\)/+ end=+/[gimuys]\{0,4\}\s*$+ end=+/[gimuys]\{0,4\}\s*[+;.,)\]}]+me=e-1 end=+/[gimuys]\{0,4\}\s\+\/+me=e-1 contains=javaScriptRegExpSpecial,javaScriptREStringSpecial oneline
+syn region	javaScriptRegExpLiteral	matchgroup=javaScriptRegExpDelimit start=+[,(\[=+]\s*\zs/\ze[^/*]+ms=e-1 start=+[,(\[=+]\?\s\+\zs/\ze[^/*]+ms=e-1 skip=+\\\\\|\(\\\|\[[^]]*\)/+ end=+/[gimuys]\{0,4\}\s*$+ end=+/[gimuys]\{0,4\}\s*[+;.,)\]}]+me=e-1 end=+/[gimuys]\{0,4\}\s\+\/+me=e-1 contains=javaScriptRegExpSpecial,javaScriptREStringSpecial,javaScriptRegExpWarn,javaScriptRegExpWarnOff,javaScriptRegExpError oneline
 
 " strict mode directive
 syn match	javaScriptStrict	"\_s*\_^\zs'use strict'\ze;"
@@ -107,7 +94,7 @@ syn match	javaScriptStrict	'\_s*\_^\zs"use strict"\ze;'
 syn keyword	javaScriptConditional	if else switch
 syn keyword	javaScriptRepeat	while do
 syn keyword	javaScriptBranch	break continue
-"
+
 " for...of
 syn region	javaScriptFor		start="\%(\<for\|\<for\_s\+await\)\_s\{-}(" end=+)+ transparent contains=ALLBUT,javaScriptStatement,javaScriptConditional,javaScriptException
 syn keyword	javaScriptOperator	for of await contained containedin=javaScriptFor
@@ -136,7 +123,7 @@ syn keyword	javaScriptUndefined	undefined
 
 " not an exhaustive list
 syn keyword	javaScriptGlobal	true false null Infinity NaN
-syn keyword	javaScriptGlobal	Array ArrayBuffer BigInt Boolean Date Function Intl JSON Math Map Number Object Promise Proxy Reflect RegExp Set String Symbol WeakMap WeakSet
+syn keyword	javaScriptGlobal	Array ArrayBuffer BigInt Boolean Date DocumentFragment Function Intl JSON Math Map Number Object Promise Proxy Reflect RegExp Set String Symbol WeakMap WeakSet
 syn keyword	javaScriptGlobal	globalThis eval
 syn keyword	javaScriptGlobal	isFinite isNaN parseFloat parseInt
 syn keyword	javaScriptGlobal	decodeURI decodeURIComponent encodeURI encodeURIComponent
@@ -173,19 +160,36 @@ syn match	javaScriptStaticMember	"^\s*static\>" contains=javaScriptStatic contai
 syn region	javaScriptBlock	start="{" end="}" transparent
 " Classes
 " class definition line (may span multiple lines)
-syn match	javaScriptClassDef	"\<class\>\_.\{-}\ze\_s*{" contains=ALLBUT,javaScriptStatement,javaScriptConditional,javaScriptRepeat,javaScriptException,javaScriptDeclaration,javaScriptFunctionDef
+syn match	javaScriptClassDef	"\<class\>\%(\_s\+\i\+\%(\_s\{-}extends\_s\{-}\i\{-}\)\?\)\?\ze\_s*{" contains=ALLBUT,javaScriptStatement,javaScriptConditional,javaScriptRepeat,javaScriptException,javaScriptDeclaration,javaScriptFunctionDef keepend
 syn keyword	javaScriptClass		class contained containedin=javaScriptClassDef
 syn keyword	javaScriptClassSpecial	extends contained containedin=javaScriptClassDef
 
 " Functions
 " function definition line (may span multiple lines)
-syn region	javaScriptFunctionDef	start="\<function\>\*\?\%(\_s\+\i*\)\?\_.\{-}\ze\_s*{" end="\ze\_s*{" contains=ALLBUT,javaScriptStatement,javaScriptConditional,javaScriptRepeat,javaScriptException,javaScriptDeclaration,javaScriptClassDef
+syn region	javaScriptFunctionDef	start="\<function\>\*\?\%(\_s\+\i*\)\?\_s\{-}\ze(\_.\{-})" end="\ze\_s*{" contains=ALLBUT,javaScriptStatement,javaScriptConditional,javaScriptRepeat,javaScriptException,javaScriptDeclaration,javaScriptClassDef keepend
 syn keyword	javaScriptFunction	function contained containedin=javaScriptFunctionDef
 
 syn match	javaScriptArrow 	"=>"
 
 syn sync match javaScriptSync	grouphere javaScriptFunctionDef "\<function\>"
 syn sync match javaScriptSync	grouphere NONE "^}"
+
+syn keyword	javaScriptCommentTodo	TODO FIXME XXX TBD NOTE contained containedin=javaScriptComment,javaScriptLineComment
+
+" ESLint in-comment config minilanguage
+syn match	javaScriptESLInlineDirective	"\<eslint-disable-\%(next-\)\?line\>.*$" contained
+" Eslint global enable/disable
+syn match	javaScriptESLBlockDirective	"\<eslint-\%(en\|dis\)able\>.*\>" contained
+" Severity directive or options
+syn match	javaScriptESLBlockDirective	+\<eslint\%(\s\+\a\+\%(-\a\+\)\?:\s\+\%(\%(\("\|'\)\%(off\|warn\|error\)\1\|[0-2]\)\|\[.\+\]\),\?\)\+\ze\_s*\%(--\)*+ contained
+" Multiline
+syn match	javaScriptESLBlockDirective	"\<eslint-\%(en\|dis\)able-\%(next-\)\?line\_s*\%(\a\+\%(-\a\+\)\?\|,\s+\|,\%(\s*\n\)\+\s*\)\+" contained
+
+syn cluster	javaScriptESLint	contains=javaScriptESLBlockDirective,javaScriptESLInlineDirective
+
+syn match	javaScriptLineComment	"\/\/.*" contains=@Spell,javaScriptCommentTodo,javaScriptESLInlineDirective
+syn match	javaScriptCommentSkip	"^[ \t]*\*\($\|[ \t]\+\)"
+syn region	javaScriptComment	start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,@javaScriptESLint keepend
 
 if exists("javaScript_fold")
     setlocal foldmethod=syntax
@@ -251,10 +255,14 @@ hi def link javaScriptClassSpecial	Special
 
 hi def link javaScriptBadShebang	Error
 hi def link javaScriptError		Error
+hi def link javaScriptRegExpError	javaScriptError
 hi def link javaScriptLineContinueError	javaScriptError
 hi def link javaScriptReserved		javaScriptError
 hi def link javaScriptDeprecated	javaScriptError
 hi def link javaScriptDeprecatedEscape	javaScriptDeprecated
+
+hi def link javaScriptRegExpWarn	Underlined
+hi def link javaScriptRegExpWarnOff	javaScriptRegExpLiteral
 
 hi def link javaScriptEmbed		Special
 hi def link javaScriptProperty		NONE
