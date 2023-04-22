@@ -174,6 +174,9 @@ syn match	javaScriptArrow 	"=>"
 syn sync match javaScriptSync	grouphere javaScriptFunctionDef "\<function\>"
 syn sync match javaScriptSync	grouphere NONE "^}"
 
+" Possible object initializer
+syn match	javaScriptKeyLike		/\i\{-}\_s*:/ contains=ALLBUT,@javaScriptTop,javaScriptKeyLike,@javaScriptComments contained containedin=javaScriptBlock
+
 syn keyword	javaScriptCommentTodo	TODO FIXME XXX TBD NOTE contained containedin=javaScriptComment,javaScriptLineComment
 
 " ESLint in-comment config minilanguage
@@ -190,14 +193,12 @@ syn cluster	javaScriptESLint	contains=javaScriptESLBlockDirective,javaScriptESLI
 syn match	javaScriptLineComment	"\/\/.*" contains=@Spell,javaScriptCommentTodo,javaScriptESLInlineDirective
 syn match	javaScriptCommentSkip	"^[ \t]*\*\($\|[ \t]\+\)"
 syn region	javaScriptComment	start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,@javaScriptESLint keepend
+syn cluster	javaScriptComments	contains=javaScriptComment,javaScriptLineComment,javaScriptCommentTodo,@javaScriptESLint
 
 if exists("javaScript_fold")
     setlocal foldmethod=syntax
     setlocal foldtext=getline(v:foldstart)
 endif
-
-" Object initializer
-syn match	javaScriptKeyLike		/\i\{-}\_s*:/ contains=ALLBUT,@javaScriptTop,javaScriptMemberInit contained containedin=javaScriptBlock
 
 " Everything after a dot except numbers
 syn match	javaScriptProperty	/\.\h\w*/ contains=javaScriptSpecialProperty
