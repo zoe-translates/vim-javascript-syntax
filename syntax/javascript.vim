@@ -123,17 +123,17 @@ syn keyword	javaScriptUndefined	undefined
 
 " not an exhaustive list
 syn keyword	javaScriptGlobal	true false null Infinity NaN
-syn keyword	javaScriptGlobal	Array ArrayBuffer BigInt Boolean Date DocumentFragment Function Intl JSON Math Map Number Object Promise Proxy Reflect RegExp Set String Symbol WeakMap WeakSet
+syn keyword	javaScriptGlobal	AbortController AbortSignal Array ArrayBuffer BigInt Boolean Date DocumentFragment Function Intl JSON Math Map Number Object Promise Proxy Reflect RegExp Set String Symbol WeakMap WeakSet
 syn keyword	javaScriptGlobal	globalThis eval
 syn keyword	javaScriptGlobal	isFinite isNaN parseFloat parseInt
 syn keyword	javaScriptGlobal	decodeURI decodeURIComponent encodeURI encodeURIComponent
 syn keyword	javaScriptGlobal	setTimeout setInterval clearTimeout structuredClone
-syn keyword	javaScriptGlobal	globalThis document window self top parent closed console history location localStorage name navigator opener scheduler
+syn keyword	javaScriptGlobal	document window self top parent closed console history location localStorage name navigator opener scheduler
 
 syn keyword	javaScriptGlobalErrors	Error AggregateError EvalError RangeError ReferenceError SyntaxError TypeError URIError
 
 " useful APIs
-syn keyword	javaScriptAPI	fetch IntersectionObserver IntersectionObserverEntry Request Response ResizeObserver ResizeObserverEntry URL URLSearchParams XMLHttpRequest 
+syn keyword	javaScriptAPI	DOMParser fetch IntersectionObserver IntersectionObserverEntry Request Response ResizeObserver ResizeObserverEntry URL URLSearchParams XMLHttpRequest
 " NodeJS API
 syn keyword	javaScriptAPI	require __dirname __filename exports module
 " ALL_CAPS typically globals
