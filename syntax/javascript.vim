@@ -84,7 +84,7 @@ syn match	javaScriptRegExpSpecial	"\\c[A-Z]" contained containedin=javaScriptReg
 syn match 	javaScriptRegExpSpecial	"\\[pP]{.\{-1,}}" contained containedin=javaScriptRegExpLiteral
 syn match	javaScriptRegExpError	"/\{2,}" contained containedin=javaScriptRegExpLiteral
 
-syn region	javaScriptRegExpLiteral	matchgroup=javaScriptRegExpDelimit start=+[,(\[=+]\s*\zs/\ze[^/*]+ms=e-1 start=+[,(\[=+]\?\s\+\zs/\ze[^/*]+ms=e-1 skip=+\\\\\|\(\\\|\[[^]]*\)/+ end=+/[gimuys]\{0,4\}\s*$+ end=+/[gimuys]\{0,4\}\s*[+;.,)\]}]+me=e-1 end=+/[gimuys]\{0,4\}\s\+\/+me=e-1 contains=javaScriptRegExpSpecial,javaScriptREStringSpecial,javaScriptRegExpWarn,javaScriptRegExpWarnOff,javaScriptRegExpError oneline
+syn region	javaScriptRegExpLiteral	matchgroup=javaScriptRegExpDelimit start=+[,(\[=+!]\s*\zs/\ze[^/*]+ms=e-1 start=+[,(\[=+!]\?\s\+\zs/\ze[^/*]+ms=e-1 skip=+\\\\\|\(\\\|\[[^]]*\)/+ end=+/[gimuys]\{0,4\}\s*$+ end=+/[gimuys]\{0,4\}\s*[+;.,)\]}]+me=e-1 end=+/[gimuys]\{0,4\}\s\+\/+me=e-1 contains=javaScriptRegExpSpecial,javaScriptREStringSpecial,javaScriptRegExpWarn,javaScriptRegExpWarnOff,javaScriptRegExpError oneline
 
 " strict mode directive
 syn match	javaScriptStrict	"\_s*\_^\zs'use strict'\ze;"
@@ -126,14 +126,14 @@ syn keyword	javaScriptGlobal	true false null Infinity NaN
 syn keyword	javaScriptGlobal	AbortController AbortSignal Array ArrayBuffer BigInt Boolean Date DocumentFragment Function Intl JSON Math Map Number Object Promise Proxy Reflect RegExp Set String Symbol WeakMap WeakSet
 syn keyword	javaScriptGlobal	globalThis eval
 syn keyword	javaScriptGlobal	isFinite isNaN parseFloat parseInt
-syn keyword	javaScriptGlobal	decodeURI decodeURIComponent encodeURI encodeURIComponent
+syn keyword	javaScriptGlobal	atob btoa decodeURI decodeURIComponent encodeURI encodeURIComponent
 syn keyword	javaScriptGlobal	setTimeout setInterval clearTimeout structuredClone
 syn keyword	javaScriptGlobal	document window self top parent closed console history location localStorage name navigator opener scheduler
 
 syn keyword	javaScriptGlobalErrors	Error AggregateError EvalError RangeError ReferenceError SyntaxError TypeError URIError
 
 " useful APIs
-syn keyword	javaScriptAPI	DOMParser fetch IntersectionObserver IntersectionObserverEntry Request Response ResizeObserver ResizeObserverEntry URL URLSearchParams XMLHttpRequest
+syn keyword	javaScriptAPI	DOMParser fetch IntersectionObserver IntersectionObserverEntry Request Response ResizeObserver ResizeObserverEntry TextEncoder URL URLSearchParams XMLHttpRequest
 " NodeJS API
 syn keyword	javaScriptAPI	require __dirname __filename exports module
 " ALL_CAPS typically globals
